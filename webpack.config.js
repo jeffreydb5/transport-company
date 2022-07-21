@@ -1,5 +1,5 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require('path')
 
 module.exports = {
@@ -11,27 +11,45 @@ module.exports = {
     path: path.resolve(__dirname, 'public'),
     filename: '[name][contenthash].js',
     clean: true,
-    assetModuleFilename: '[name][ext]'
+    assetModuleFilename: 'assets/[hash][ext]'
   },
   devServer: {
+    watchFiles: ['./src/*'],
     port: 3000,
     open: true,
     hot: true
   },
   plugins: [
-    new MiniCssExtractPlugin(),
+    new MiniCssExtractPlugin({
+      filename: 'assets/[name][hash].css'
+    }),
     new HtmlWebpackPlugin({
-      template: './public/index.html'
+      template: path.resolve(__dirname, 'src/template.html')
     })
   ],
   module: {
     rules: [
       {
-        test: /\.scss$/,
-        use: ['style-loader', 'css-loader', 'sass-loader', 'postcss-loader']
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader']
+      },
+      {
+        test: /\.s[ac]ss$/i,
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
       },
       {
         test: /\.m?js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-react', '@babel/preset-env'],
+            plugins: ['@babel/plugin-transform-runtime']
+          }
+        }
+      },
+      {
+        test: /\.m?jsx$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
