@@ -19,13 +19,6 @@ module.exports = {
     open: true,
     hot: true
   },
-  resolve: {
-    alias: {
-      '@': '.src/',
-      images: '.src/assets/images',
-      fonts: '.src/assets/fonts'
-    }
-  },
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'assets/[name][hash].css'
@@ -64,7 +57,10 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-react', '@babel/preset-env'],
+            presets: [
+              '@babel/preset-env',
+              ['@babel/preset-react', { runtime: 'automatic' }]
+            ],
             plugins: ['@babel/plugin-transform-runtime']
           }
         }
